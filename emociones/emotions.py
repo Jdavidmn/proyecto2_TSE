@@ -35,6 +35,11 @@ model.add(Dropout(0.5))
 model.add(Dense(7, activation='softmax'))
 
 def main():
+
+    result_path = 'results'
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
+
     model.load_weights('model.h5')
 
     # prevents openCL usage and unnecessary logging messages
@@ -48,28 +53,31 @@ def main():
     cap = cv2.VideoCapture(0)
     begin = time.time()
     working = True
-    fps = 1
+    spf = 1
     while True:
 
         try:
             with open('settings.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 working = data['work']
-                fps = int(data['fps'])
+                spf = int(data['spf'])
         except FileNotFoundError:
             print("Configuracion no encontrada, ejecutando configuracion"
                   " por defecto")
 
+        facecasc = cv2.CascadeClassifier('haarcascade_frontalface'
+                                         '_default.xml')
         actual_time = time.time() - begin
 
         if working:
-            if actual_time >= fps:
-                # Find haar cascade to draw bounding box around face
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                facecasc = cv2.CascadeClassifier('haarcascade_frontalface'
-                                                 '_default.xml')
+
+            # Find haar cascade to draw bounding box around face
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            if actual_time >= spf:
+
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 faces = facecasc.detectMultiScale(gray, scaleFactor=1.3,
                                                   minNeighbors=5)
@@ -86,9 +94,16 @@ def main():
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255),
                                 2, cv2.LINE_AA)
 
-                cv2.imshow('Video', cv2.resize(frame, (1600, 960),
-                                               interpolation=cv2.INTER_CUBIC))
-                cv2.imwrite(f'{datetime.now()}.png', cv2.resize(frame, (1600, 960), interpolation=cv2.INTER_CUBIC))
+                    result_name = datetime.now()
+                    cv2.imwrite(f'results/{result_name}.png',
+                                cv2.resize(frame, (1600, 960), interpolation=cv2.INTER_CUBIC))
+
+                    with open('results/resultados.txt', 'a', encoding='utf-8') as f:
+                        resultado = f'{result_name}: {emotion_dict[maxindex]}\n'
+                        f.write(resultado)
+
+                cv2.imshow('Video', cv2.resize(frame, (1600, 960), interpolation=cv2.INTER_CUBIC))
+
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 begin = time.time()
