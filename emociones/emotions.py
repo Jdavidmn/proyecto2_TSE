@@ -6,7 +6,7 @@ from datetime import datetime
 
 import numpy as np
 import cv2
-import tensorflow as tf
+import tensorflow.lite as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -17,7 +17,7 @@ def main():
     if not os.path.exists(result_path):
         os.mkdir(result_path)
 
-    interpreter = tf.lite.Interpreter(model_path="model.tflite")
+    interpreter = tf.Interpreter(model_path="model.tflite")
     interpreter.allocate_tensors()
 
     input_details = interpreter.get_input_details()
