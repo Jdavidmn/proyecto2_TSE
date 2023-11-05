@@ -85,8 +85,6 @@ def main():
                         resultado = f'{result_name}: {emotion_dict[maxindex]}\n'
                         f.write(resultado)
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
                 begin = time.time()
         else:
             break
