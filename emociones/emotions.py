@@ -79,7 +79,7 @@ def main():
 
                     result_name = datetime.now()
                     cv2.imwrite(f'results/{result_name}.png',
-                                cv2.resize(frame, (1600, 960), interpolation=cv2.INTER_CUBIC))
+                                cv2.resize(frame, (500, 300), interpolation=cv2.INTER_CUBIC))
 
                     with open('results/resultados.txt', 'a', encoding='utf-8') as f:
                         resultado = f'{result_name}: {emotion_dict[maxindex]}\n'
