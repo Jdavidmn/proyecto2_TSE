@@ -16,7 +16,9 @@ layout = [[sg.Text('Conexión: '),
            sg.Button('Configurar'),
            sg.Text('                             '),
            sg.Button('Leer datos')],
-          [sg.Image(key='image')],
+          [sg.Image(filename='results/2023-11-05 23:52:39.743311.png', key='image')],
+          [sg.Button('Anterior', key='previa', visible=False),
+           sg.Button('Siguiente', key='siguiente', visible=False)],
           [sg.Button('Ok'),
            sg.Button('Cancel')]
           ]
@@ -33,6 +35,8 @@ while True:
         break
 
     print('You entered ', values[0])
-    window['image'].update(filename='results/2023-11-05 23:52:39.743311.png')
+    window['image'].update()
+    window['previa'].update(visible=True)
+    window['siguiente'].update(visible=True)
 
 window.close()
