@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import cv2
 
 sg.theme('DarkGrey7')   # Add a touch of color
 # All the stuff inside your window.
@@ -15,6 +16,7 @@ layout = [[sg.Text('Conexión: '),
            sg.Button('Configurar'),
            sg.Text('                             '),
            sg.Button('Leer datos')],
+          [sg.Image(key='image')],
           [sg.Button('Ok'),
            sg.Button('Cancel')]
           ]
@@ -31,5 +33,6 @@ while True:
         break
 
     print('You entered ', values[0])
+    window['image'].update(filename='results/2023-11-05 23:52:39.743311.png')
 
 window.close()
