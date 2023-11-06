@@ -39,8 +39,7 @@ layout = [[sg.Text('Conexión: '),
           [sg.Button('Anterior', key='previa', visible=False),
            sg.Button('Siguiente', key='siguiente', visible=False),
            sg.Button('Cerrar imagen', key='cerrar', visible=False)],
-          [sg.Button('Ok'),
-           sg.Button('Cancel')]
+          [sg.Button('Cerrar')]
           ]
 
 # Create the Window
@@ -54,7 +53,7 @@ while True:
     event, values = window.read()
 
     # if user closes window or clicks cancel
-    if event in (sg.WIN_CLOSED, 'Cancel'):
+    if event in (sg.WIN_CLOSED, 'Cerrar'):
         break
     elif event == 'datos':
         num_images, images = read_data()
