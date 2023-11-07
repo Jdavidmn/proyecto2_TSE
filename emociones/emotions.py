@@ -30,11 +30,22 @@ def main():
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful",
                     3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
+    data = {'work': True, 'spf': 1}
+
+    try:
+        with open('settings.json', 'r', encoding='utf-8') as f:
+            data['spf'] = json.load(f)['spf']
+    except FileNotFoundError:
+        print("Configuracion no encontrada, ejecutando configuracion"
+              " por defecto")
+
+    with open('settings.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f)
+
     # start the webcam feed
     cap = cv2.VideoCapture(0)
     begin = time.time()
-    working = True
-    spf = 1
+
     while True:
 
         try:
