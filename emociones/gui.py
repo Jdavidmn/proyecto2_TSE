@@ -53,6 +53,27 @@ def turn_on(client, path, app_name, local_use):
         a, b, c = client.exec_command(f'bash -c "cd {path} && python3 {app_name}"')
 
 
+def turn_off(client, path, app_name):
+    """
+
+    """
+
+    path = Path(path)
+    if not path.exists():
+        print(f'La ruta {path} no existe')
+        return
+    client.exec_command(f'sed -i \'s/"work": true:/"work": true/g\' {path/app_name}')
+
+
+def revisar_app(client, app_name):
+    """
+
+    """
+
+    _, stdout, _ = client.exec_command(f'ps aux | awk \{print $2, $12\} | grep -P "^\\d+ python3 {app_name}"')
+    print(stdout.read().decode())
+
+
 def configure():
     """
 
@@ -167,11 +188,12 @@ def main():
                 window['sys_status'].update('DESCONECTADO')
 
         elif event == 'Configurar':
-            configure()
+            revisar_app(client, APP_NAME)
 
         elif event == 'encender':
             turn_on(client, EXECUTION_PATH, APP_NAME, LOCAL_USE)
             window['app_status'].update('ENCENDIDO')
+            window['encender'].update('Apagar aplicación')
 
     client.close()
     window.close()
