@@ -10,6 +10,7 @@ USERNAME = 'david'
 PASSWORD = ''
 EXECUTION_PATH = '/home/david/cursos/embabidos/proyecto2/proyecto2_TSE/emociones/'
 APP_NAME = 'emotions.py'
+SETTINGS_FILE = 'settings.json'
 LOCAL_USE = True
 
 
@@ -53,7 +54,7 @@ def turn_on(client, path, app_name, local_use):
         a, b, c = client.exec_command(f'bash -c "cd {path} && python3 {app_name}"')
 
 
-def turn_off(client, path, app_name):
+def turn_off(client, path, settings_file):
     """
 
     """
@@ -62,7 +63,7 @@ def turn_off(client, path, app_name):
     if not path.exists():
         print(f'La ruta {path} no existe')
         return
-    client.exec_command(f'sed -i \'s/"work": true:/"work": true/g\' {path/app_name}')
+    client.exec_command(f'sed -i \'s/"work": true/"work": false/g\' {path/settings_file}')
 
 
 def revisar_app(client, app_name):
@@ -70,8 +71,9 @@ def revisar_app(client, app_name):
 
     """
 
-    _, stdout, _ = client.exec_command(f'ps aux | awk \{print $2, $12\} | grep -P "^\\d+ python3 {app_name}"')
-    print(stdout.read().decode())
+    _, stdout, _ = client.exec_command(f'pgrep -f "python3 {app_name}"')
+    salida = stdout.read().decode()
+    return salida != ""
 
 
 def configure():
@@ -182,18 +184,30 @@ def main():
                 window['sys_status'].update('DESCONECTADO')
 
         elif event == 'check':
+            # Conexion
             if revisar_conexion(client):
                 window['sys_status'].update('CONECTADO')
             else:
                 window['sys_status'].update('DESCONECTADO')
 
+            # Aplicacion
+            if revisar_app(client, APP_NAME):
+                window['app_status'].update('ENCENDIDO')
+            else:
+                window['app_status'].update('APAGADO')
+
         elif event == 'Configurar':
-            revisar_app(client, APP_NAME)
+            configure()
 
         elif event == 'encender':
-            turn_on(client, EXECUTION_PATH, APP_NAME, LOCAL_USE)
-            window['app_status'].update('ENCENDIDO')
-            window['encender'].update('Apagar aplicación')
+            if not revisar_app(client, APP_NAME):
+                turn_on(client, EXECUTION_PATH, APP_NAME, LOCAL_USE)
+                window['app_status'].update('ENCENDIDO')
+                window['encender'].update('Apagar aplicación')
+            else:
+                turn_off(client, EXECUTION_PATH, SETTINGS_FILE)
+                window['app_status'].update('APAGADO')
+                window['encender'].update('Encender aplicación')
 
     client.close()
     window.close()
