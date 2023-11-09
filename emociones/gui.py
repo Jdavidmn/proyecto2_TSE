@@ -76,13 +76,17 @@ def revisar_app(client, app_name):
     return salida != ""
 
 
-def configure():
+def configure(client, path, settings_file, spf):
     """
 
     """
 
-    print("Esta función va a generar el archivo de configuración"
-          " y enviarlo a la rasp por ssh")
+    path = Path(path)
+    if not path.exists():
+        print(f'La ruta {path} no existe')
+        return
+    comando = 'sed -ir \'s/"spf": [0-9]\\{{1,\\}}/"spf": {}/g\' {}'
+    a, b, c = client.exec_command(comando.format(spf, path/settings_file))
 
 
 def read_data() -> List[Path]:
@@ -197,7 +201,7 @@ def main():
                 window['app_status'].update('APAGADO')
 
         elif event == 'Configurar':
-            configure()
+            configure(client, EXECUTION_PATH, SETTINGS_FILE, int(values[0]))
 
         elif event == 'encender':
             if not revisar_app(client, APP_NAME):
