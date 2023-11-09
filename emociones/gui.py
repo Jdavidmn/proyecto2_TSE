@@ -7,13 +7,14 @@ import threading
 import time
 
 
-IP_ADDRESS = '127.0.0.1'
-USERNAME = 'david'
-PASSWORD = ''
-EXECUTION_PATH = '/home/david/cursos/embabidos/proyecto2/proyecto2_TSE/emociones/'
+IP_ADDRESS = '172.21.225.35'
+USERNAME = 'pi'
+PASSWORD = 'pi'
+EXECUTION_PATH = '/usr/bin/'
 APP_NAME = 'emotions.py'
 SETTINGS_FILE = 'settings.json'
-LOCAL_USE = True
+LOCAL_USE = False
+LOCAL_PATH = '/home/david/Desktop/results/'
 
 
 def show_message(window, mensaje):
@@ -105,12 +106,12 @@ def configure(window, client, path, settings_file, spf):
     a, b, c = client.exec_command(comando.format(spf, path/settings_file))
 
 
-def read_data() -> List[Path]:
+def read_data(images_dir) -> List[Path]:
     """
 
     """
 
-    results_path = Path('results')
+    results_path = Path(images_dir)
 
     if not results_path.exists():
         return 0, []
@@ -119,6 +120,28 @@ def read_data() -> List[Path]:
                  for ext in ['png']], [])
 
     return len(paths), sorted(paths)
+
+def importar(client, client_path, local_path):
+    """
+
+    """
+
+    local_path = Path(local_path)
+    client_path = Path(client_path)
+
+    if not local_path.exists():
+        local_path.makedirs_p()
+
+    scp_client = client.open_sftp()
+
+    archivos = sorted(scp_client.listdir(client_path))
+
+    for file in archivos:
+        client_file_path = client_path / file
+        local_file_path = local_path / file
+        scp_client.get(client_file_path, local_file_path)
+
+    scp_client.close()
 
 
 def main():
@@ -138,12 +161,10 @@ def main():
                sg.Text('    '),
                sg.Button('Encender aplicación', key='encender')],
               [sg.Button('Configurar'),
-               sg.Text('        '),
                sg.Button('Conectar', key='conectar'),
-               sg.Text('        '),
                sg.Button('Revisar estados', key='check'),
-               sg.Text('        '),
-               sg.Button('Leer datos', key='datos')],
+               sg.Button('Mostrar datos', key='datos'),
+               sg.Button('Importar datos', key='importar')],
               [sg.Image(key='image')],
               [sg.Button('Anterior', key='previa', visible=False),
                sg.Button('Siguiente', key='siguiente', visible=False),
@@ -167,7 +188,7 @@ def main():
         if event in (sg.WIN_CLOSED, 'Cerrar'):
             break
         if event == 'datos':
-            num_images, images = read_data()
+            num_images, images = read_data(LOCAL_PATH)
             if num_images != 0:
                 window['datos'].update(visible=False)
                 window['image'].update(filename=images[0])
@@ -235,6 +256,12 @@ def main():
                     turn_off(window, client, EXECUTION_PATH, SETTINGS_FILE)
                     window['app_status'].update('APAGADO')
                     window['encender'].update('Encender aplicación')
+            else:
+                mensaje = 'La conexión no está establecida'
+                threading.Thread(target=show_message, args=(window, mensaje,), daemon=True).start()
+        elif event == 'importar':
+            if revisar_conexion(client):
+                importar(client, EXECUTION_PATH + 'results/', LOCAL_PATH)
             else:
                 mensaje = 'La conexión no está establecida'
                 threading.Thread(target=show_message, args=(window, mensaje,), daemon=True).start()
