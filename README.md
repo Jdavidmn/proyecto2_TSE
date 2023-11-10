@@ -320,3 +320,12 @@ VIDEO_CAMERA = "1"
 GPU_MEM = "16"
 
 ```
+## Reflexión Sobre el Desarrollo del Proyecto
+
+### David Monge
+
+### Jordani Mejía
+
+La implementación de un sistema capaz de analizar las expresiones faciales para determinar emociones implica una combinación de técnicas, desde el preprocesamiento de imágenes hasta el uso de modelos de aprendizaje profundo. lograr que estos modelos funcionen eficientemente en un entorno embebido como el Raspberry Pi 2 fue una experiencia nueva, que generó mucho aprendizaje durante el desarrollo del mismo, lo que implicó también un reto personal y una responsabilidad con mi compañero de trabajo.
+La capacidad de contribuir al desarrollo de tecnologías que pueden tener aplicaciones prácticas, como el reconocimiento de expresiones faciales, me deja reflexionando sobre el potencial positivo y negativo de la inteligencia artificial. La necesidad de equilibrar la innovación con la ética y la privacidad se ha convertido en una parte escencial en el enfoque personal durante este proyecto.
+
