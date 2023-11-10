@@ -17,7 +17,7 @@ def main():
     if not os.path.exists(result_path):
         os.mkdir(result_path)
 
-    interpreter = tf.Interpreter(model_path="model.tflite")
+    interpreter = tf.Interpreter(model_path="D:\Taller_Emb\proyecto2_TSE\emociones\model.tflite")
     interpreter.allocate_tensors()
 
     input_details = interpreter.get_input_details()
