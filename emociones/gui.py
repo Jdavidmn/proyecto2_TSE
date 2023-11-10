@@ -7,7 +7,7 @@ import threading
 import time
 
 
-IP_ADDRESS = '172.21.225.35'
+IP_ADDRESS = '172.21.201.57'
 USERNAME = 'pi'
 PASSWORD = 'pi'
 EXECUTION_PATH = '/usr/bin/'
